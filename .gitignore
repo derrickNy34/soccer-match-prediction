@@ -1,0 +1,34 @@
+# Data files (too large for GitHub - download from Kaggle)
+database.sqlite
+*.csv
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Model outputs (can be regenerated)
+models/
+*.pkl
+*.joblib
+
+# SHAP plots and figures (can be regenerated)
+figures/
