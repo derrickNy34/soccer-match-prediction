@@ -1,7 +1,5 @@
 # Data files (too large for GitHub - download from Kaggle)
 database.sqlite
-*.csv
-data/
 
 # Python
 __pycache__/
@@ -29,6 +27,3 @@ Thumbs.db
 models/
 *.pkl
 *.joblib
-
-# SHAP plots and figures (can be regenerated)
-figures/
