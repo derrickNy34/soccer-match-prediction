@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soccer Match Prediction — Research Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0B1120;
+    --bg-card: #131B2E;
+    --bg-card-alt: #172035;
+    --accent-green: #22D3A7;
+    --accent-blue: #3B82F6;
+    --accent-orange: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-purple: #A78BFA;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-dim: #64748B;
+    --border: #1E293B;
+    --glow-green: rgba(34, 211, 167, 0.15);
+    --glow-blue: rgba(59, 130, 246, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .poster {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    text-align: center;
+    padding: 48px 40px 40px;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, var(--bg-card) 0%, #0F1A2E 50%, var(--bg-card) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue), var(--accent-purple));
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, var(--glow-green) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 42px;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .header .meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .header .meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ---- THREE-COLUMN GRID ---- */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+
+  .card-accent-green { border-top: 2px solid var(--accent-green); }
+  .card-accent-blue { border-top: 2px solid var(--accent-blue); }
+  .card-accent-orange { border-top: 2px solid var(--accent-orange); }
+  .card-accent-purple { border-top: 2px solid var(--accent-purple); }
+  .card-accent-red { border-top: 2px solid var(--accent-red); }
+
+  .card h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+  }
+
+  .card h3 {
+    font-weight: 600;
+    font-size: 14px;
+    margin: 14px 0 6px;
+    color: var(--accent-green);
+  }
+
+  .card p, .card li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card ul li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent-green);
+    font-weight: 700;
+  }
+
+  /* ---- RESULTS TABLE ---- */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  .results-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg-dark);
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .results-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .results-table tr:last-child td { border-bottom: none; }
+
+  .results-table .best {
+    color: var(--accent-green);
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .results-table .model-name {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .results-table .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  /* ---- METRIC CARDS ---- */
+  .metric-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .metric-box {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+
+  .metric-box .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent-green);
+    display: block;
+  }
+
+  .metric-box .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ---- ENSEMBLE DIAGRAM ---- */
+  .ensemble-diagram {
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 14px 0;
+    text-align: center;
+  }
+
+  .ensemble-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .ensemble-box {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+
+  .eb-rf { background: rgba(59,130,246,0.12); border-color: var(--accent-blue); color: var(--accent-blue); }
+  .eb-xgb { background: rgba(245,158,11,0.12); border-color: var(--accent-orange); color: var(--accent-orange); }
+  .eb-lr { background: rgba(167,139,250,0.12); border-color: var(--accent-purple); color: var(--accent-purple); }
+  .eb-vote { background: rgba(34,211,167,0.12); border-color: var(--accent-green); color: var(--accent-green); }
+
+  .ensemble-arrow {
+    color: var(--text-dim);
+    font-size: 18px;
+    margin: 4px 0;
+  }
+
+  /* ---- CONFUSION MATRIX VIZ ---- */
+  .cm-grid {
+    display: grid;
+    grid-template-columns: auto repeat(3, 1fr);
+    grid-template-rows: auto repeat(3, 1fr);
+    gap: 2px;
+    max-width: 280px;
+    margin: 14px auto;
+    font-size: 11px;
+  }
+
+  .cm-header {
+    padding: 6px 4px;
+    text-align: center;
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .cm-cell {
+    padding: 10px 4px;
+    text-align: center;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .cm-label {
+    padding: 10px 8px;
+    text-align: right;
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .cm-diag { background: rgba(34, 211, 167, 0.2); color: var(--accent-green); }
+  .cm-off { background: rgba(239, 68, 68, 0.1); color: var(--text-dim); }
+  .cm-corner { }
+
+  /* ---- CLASS DIST BARS ---- */
+  .class-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+    font-size: 12px;
+  }
+
+  .class-bar .bar-label {
+    width: 75px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .class-bar .bar-track {
+    flex: 1;
+    height: 20px;
+    background: var(--bg-dark);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .class-bar .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--bg-dark);
+  }
+
+  .bar-h { background: var(--accent-green); }
+  .bar-d { background: var(--accent-orange); }
+  .bar-a { background: var(--accent-blue); }
+
+  /* ---- FEATURE LIST ---- */
+  .feature-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    margin: 3px 2px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .feature-tag.top {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+  }
+
+  /* ---- REFERENCES ---- */
+  .ref-list {
+    list-style: none;
+    padding: 0;
+    counter-reset: ref;
+  }
+
+  .ref-list li {
+    padding: 6px 0 6px 28px;
+    position: relative;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .ref-list li::before {
+    counter-increment: ref;
+    content: '[' counter(ref) ']';
+    position: absolute;
+    left: 0;
+    color: var(--accent-green);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    margin-top: 24px;
+    text-align: center;
+    padding: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .footer a {
+    color: var(--accent-green);
+    text-decoration: none;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 1100px) {
+    .columns { grid-template-columns: 1fr; }
+    .header h1 { font-size: 32px; }
+  }
+
+  @media print {
+    body { background: white; color: #1a1a1a; }
+    .card { border: 1px solid #ddd; background: #fafafa; }
+    .header { background: #f0f4f8; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- ======== HEADER ======== -->
+  <div class="header">
+    <h1>A Comparative Analysis of Ensemble Learning Methods<br>for Predicting Soccer Match Outcomes</h1>
+    <div class="subtitle">Bagging vs. Boosting vs. Stacking on 25,000+ European Matches</div>
+    <div class="meta">
+      <span><span class="meta-dot" style="background:var(--accent-green)"></span> Derrick — Personal Project</span>
+      <span><span class="meta-dot" style="background:var(--accent-blue)"></span> European Soccer Database (Kaggle)</span>
+      <span><span class="meta-dot" style="background:var(--accent-orange)"></span> 2026</span>
+    </div>
+  </div>
+
+  <!-- ======== THREE COLUMNS ======== -->
+  <div class="columns">
+
+    <!-- ======== LEFT COLUMN ======== -->
+    <div class="left-col">
+
+      <!-- Introduction -->
+      <div class="card card-accent-green" style="margin-bottom:20px">
+        <h2>Introduction</h2>
+        <p>Predicting soccer match outcomes is a challenging three-class classification problem — <strong>Home Win</strong>, <strong>Draw</strong>, or <strong>Away Win</strong> — due to the sport's inherent randomness and the difficulty of capturing pre-match signals that distinguish outcomes.</p>
+        <p style="margin-top:10px">This project compares three ensemble learning strategies to evaluate which best handles this uncertainty: <strong>bagging</strong> (Random Forest), <strong>boosting</strong> (XGBoost), and <strong>stacking</strong> (Voting Ensemble combining both with Logistic Regression).</p>
+        <p style="margin-top:10px">The literature reports 55–60% accuracy as the ceiling for three-class soccer prediction using traditional ML methods. Ensemble approaches — particularly gradient-boosted trees — consistently outperform both standalone classifiers and deep learning for this task.</p>
+      </div>
+
+      <!-- Dataset -->
+      <div class="card card-accent-blue" style="margin-bottom:20px">
+        <h2>Dataset</h2>
+        <p><strong>European Soccer Database</strong> — 25,979 matches across 11 leagues from 2008 to 2016. Includes player FIFA attributes, team tactical profiles, and betting odds from multiple providers.</p>
+
+        <h3>Target Distribution</h3>
+        <div style="margin-top:8px">
+          <div class="class-bar">
+            <span class="bar-label">Home Win</span>
+            <div class="bar-track"><div class="bar-fill bar-h" style="width:45.9%">45.9%</div></div>
+          </div>
+          <div class="class-bar">
+            <span class="bar-label">Away Win</span>
+            <div class="bar-track"><div class="bar-fill bar-a" style="width:28.7%">28.7%</div></div>
+          </div>
+          <div class="class-bar">
+            <span class="bar-label">Draw</span>
+            <div class="bar-track"><div class="bar-fill bar-d" style="width:25.4%">25.4%</div></div>
+          </div>
+        </div>
+        <p style="margin-top:10px;font-size:12px;color:var(--text-dim)">Home Wins are nearly 2× more frequent than Draws — a class imbalance that directly biases model predictions.</p>
+      </div>
+
+      <!-- Feature Engineering -->
+      <div class="card card-accent-green" style="margin-bottom:20px">
+        <h2>Feature Engineering</h2>
+        <p style="margin-bottom:10px">Raw match data alone is insufficient. Six categories of features were engineered from the relational database:</p>
+        <ul>
+          <li><strong>Recent Form</strong> — Points earned in last 5 matches (3/1/0 for W/D/L) plus rolling goal difference</li>
+          <li><strong>Head-to-Head</strong> — Historical win rate between the two teams over last 5 meetings</li>
+          <li><strong>Player Ratings</strong> — Average FIFA overall_rating per team using most recent pre-match data</li>
+          <li><strong>Betting Odds</strong> — Market-implied probabilities from Bet365, normalized to remove overround</li>
+          <li><strong>Team Tactics</strong> — Build-up speed, defence pressure, chance creation from Team_Attributes</li>
+          <li><strong>Contextual</strong> — Home advantage indicator, league, and season encodings</li>
+        </ul>
+        <p style="margin-top:10px;font-size:12px;color:var(--text-dim)">All rolling features use only past data (shifted by 1 match) to prevent data leakage. 80/20 stratified train-test split preserves class balance.</p>
+      </div>
+
+      <!-- Ensemble Methods Diagram -->
+      <div class="card card-accent-purple">
+        <h2>Ensemble Strategies</h2>
+        <div class="ensemble-diagram">
+          <div class="ensemble-row">
+            <div class="ensemble-box eb-rf">Random Forest<br><span style="font-weight:400;font-size:10px">100 trees · Bagging</span></div>
+            <div class="ensemble-box eb-xgb">XGBoost<br><span style="font-weight:400;font-size:10px">300 trees · Boosting</span></div>
+            <div class="ensemble-box eb-lr">Logistic Regression<br><span style="font-weight:400;font-size:10px">Linear baseline</span></div>
+          </div>
+          <div class="ensemble-arrow">▼ &nbsp; Soft Voting (averaged probabilities) &nbsp; ▼</div>
+          <div class="ensemble-row">
+            <div class="ensemble-box eb-vote">Voting Ensemble<br><span style="font-weight:400;font-size:10px">Combined prediction</span></div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text-dim)"><strong>Bagging</strong> trains independent trees on random subsets (reduces variance). <strong>Boosting</strong> trains sequential trees that correct prior errors (reduces bias). <strong>Stacking</strong> combines both strategies for robustness.</p>
+      </div>
+
+    </div>
+
+    <!-- ======== MIDDLE COLUMN ======== -->
+    <div class="middle-col">
+
+      <!-- Preprocessing -->
+      <div class="card card-accent-blue" style="margin-bottom:20px">
+        <h2>Preprocessing Pipeline</h2>
+        <ul>
+          <li>Connect to SQLite and join Match, Team, Player_Attributes, and Team_Attributes tables</li>
+          <li>Remove duplicates and handle missing values (median imputation for features)</li>
+          <li>Drop non-generalizable columns (match IDs, timestamps, raw player IDs)</li>
+          <li>Engineer all features with temporal ordering to prevent leakage</li>
+          <li>One-hot encode categorical variables (league, season)</li>
+          <li>80/20 stratified train-test split</li>
+          <li>5-fold stratified cross-validation during hyperparameter tuning</li>
+        </ul>
+      </div>
+
+      <!-- Results -->
+      <div class="card card-accent-green" style="margin-bottom:20px">
+        <h2>Results</h2>
+
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Accuracy</th>
+              <th>F1 Score</th>
+              <th>AUC-ROC</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="model-name">Random Forest</td>
+              <td class="num">50.87%</td>
+              <td class="num">0.4623</td>
+              <td class="num">0.6392</td>
+              <td class="num">149.0s</td>
+            </tr>
+            <tr>
+              <td class="model-name">XGBoost</td>
+              <td class="num">50.27%</td>
+              <td class="num best">0.4634</td>
+              <td class="num">0.6403</td>
+              <td class="num">61.2s</td>
+            </tr>
+            <tr>
+              <td class="model-name">Voting Ensemble</td>
+              <td class="num best">52.21%</td>
+              <td class="num">0.4585</td>
+              <td class="num best">0.6516</td>
+              <td class="num best">2.7s</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="metric-row">
+          <div class="metric-box">
+            <span class="value">52.2%</span>
+            <span class="label">Best Accuracy</span>
+          </div>
+          <div class="metric-box">
+            <span class="value">0.652</span>
+            <span class="label">Best AUC-ROC</span>
+          </div>
+          <div class="metric-box">
+            <span class="value">0.463</span>
+            <span class="label">Best F1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confusion Matrix - XGBoost (Best F1) -->
+      <div class="card card-accent-orange" style="margin-bottom:20px">
+        <h2>Confusion Matrix — XGBoost</h2>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Best weighted F1 score (0.4634). Rows = actual, columns = predicted.</p>
+        <div class="cm-grid">
+          <div class="cm-corner"></div>
+          <div class="cm-header">H</div>
+          <div class="cm-header">D</div>
+          <div class="cm-header">A</div>
+
+          <div class="cm-label">HOME</div>
+          <div class="cm-cell cm-diag">1,823</div>
+          <div class="cm-cell cm-off">160</div>
+          <div class="cm-cell cm-off">401</div>
+
+          <div class="cm-label">DRAW</div>
+          <div class="cm-cell cm-off">716</div>
+          <div class="cm-cell cm-diag">157</div>
+          <div class="cm-cell cm-off">446</div>
+
+          <div class="cm-label">AWAY</div>
+          <div class="cm-cell cm-off">830</div>
+          <div class="cm-cell cm-off">184</div>
+          <div class="cm-cell cm-diag">479</div>
+        </div>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:10px"><strong>Critical insight:</strong> Draw recall is only 11.9% — the model predicts Home Win 3× more often than Draw for actual draws.</p>
+      </div>
+
+      <!-- F1 Per Class -->
+      <div class="card card-accent-blue">
+        <h2>Per-Class F1 Score Comparison</h2>
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>RF</th>
+              <th>XGBoost</th>
+              <th>Voting</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="model-name">Home Win</td>
+              <td class="num">0.6429</td>
+              <td class="num">0.6336</td>
+              <td class="num best">0.6541</td>
+            </tr>
+            <tr>
+              <td class="model-name">Draw</td>
+              <td class="num">0.1384</td>
+              <td class="num best">0.1725</td>
+              <td class="num">0.0899</td>
+            </tr>
+            <tr>
+              <td class="model-name">Away Win</td>
+              <td class="num">0.4601</td>
+              <td class="num">0.4485</td>
+              <td class="num best">0.4717</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:10px">Draw F1 scores are 3–7× worse than other classes across all models. This is the dominant bottleneck.</p>
+      </div>
+    </div>
+
+    <!-- ======== RIGHT COLUMN ======== -->
+    <div class="right-col">
+
+      <!-- Feature Importance -->
+      <div class="card card-accent-orange" style="margin-bottom:20px">
+        <h2>Feature Importance</h2>
+        <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Permutation importance — F1 drop when feature values are shuffled. Higher = more important.</p>
+
+        <h3>Most Impactful Features</h3>
+        <div style="margin-top:8px">
+          <span class="feature-tag top">Betting Probabilities</span>
+          <span class="feature-tag top">Team Player Ratings</span>
+          <span class="feature-tag top">Rating Difference</span>
+          <span class="feature-tag">Recent Form Points</span>
+          <span class="feature-tag">Form Goal Difference</span>
+          <span class="feature-tag">Head-to-Head Record</span>
+          <span class="feature-tag">Defence Pressure</span>
+          <span class="feature-tag">Build-Up Speed</span>
+          <span class="feature-tag">Chance Creation</span>
+        </div>
+
+        <p style="margin-top:14px;font-size:12px;color:var(--text-secondary)"><strong>Key finding:</strong> Betting odds — which aggregate expert and public knowledge — are the single most predictive feature. This confirms that market-implied probabilities remain difficult for pure statistical models to beat.</p>
+      </div>
+
+      <!-- AUC-ROC -->
+      <div class="card card-accent-blue" style="margin-bottom:20px">
+        <h2>AUC-ROC Explained</h2>
+        <p>AUC-ROC measures how well the model distinguishes between classes across all probability thresholds. A score of 0.5 = random guessing, 1.0 = perfect separation.</p>
+        <p style="margin-top:8px">For three-class problems, <strong>One-vs-One (OVO)</strong> calculates AUC for every pair of classes and averages them.</p>
+
+        <div class="metric-row" style="grid-template-columns:1fr 1fr">
+          <div class="metric-box">
+            <span class="value" style="font-size:18px">0.652</span>
+            <span class="label">Voting AUC</span>
+          </div>
+          <div class="metric-box">
+            <span class="value" style="font-size:18px;color:var(--text-dim)">0.500</span>
+            <span class="label">Random Baseline</span>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:8px">All models achieve AUC > 0.63, confirming they capture meaningful signal above chance — even if raw accuracy appears modest.</p>
+      </div>
+
+      <!-- Conclusion -->
+      <div class="card card-accent-green" style="margin-bottom:20px">
+        <h2>Conclusion</h2>
+        <ul>
+          <li><strong>Voting Ensemble achieves the best accuracy (52.2%) and AUC (0.652)</strong>, while XGBoost leads on F1. The small margins suggest the feature set's prediction ceiling has been reached.</li>
+          <li><strong>Draw prediction is the bottleneck</strong> — all models achieve &lt;12% draw recall. Draws lack distinctive pre-match signals compared to decisive outcomes.</li>
+          <li><strong>Results align with published benchmarks</strong> — 50–52% accuracy is realistic without in-match event data (xG, shot maps, possession sequences).</li>
+          <li><strong>XGBoost is the most practical choice</strong> — 2.4× faster than Random Forest with comparable performance.</li>
+        </ul>
+      </div>
+
+      <!-- Challenges -->
+      <div class="card card-accent-red" style="margin-bottom:20px">
+        <h2>Challenges</h2>
+        <ul>
+          <li><strong>Class imbalance</strong> — Home Wins (46%) dominate, biasing all models toward the majority class</li>
+          <li><strong>Draw unpredictability</strong> — No strong statistical signatures distinguish draws from wins/losses pre-match</li>
+          <li><strong>Data limitations</strong> — Dataset covers 2008–2016; modern tactics and player dynamics differ</li>
+          <li><strong>Feature ceiling</strong> — Without in-match event streams, pre-match features hit a natural prediction limit</li>
+        </ul>
+      </div>
+
+      <!-- References -->
+      <div class="card card-accent-purple">
+        <h2>References</h2>
+        <ol class="ref-list">
+          <li>Atta Mills, E., et al. (2024). "Data-driven prediction of soccer outcomes using enhanced ML and deep learning." <em>Journal of Big Data</em>, Springer.</li>
+          <li>Carpita, M., et al. (2019). "Exploring and modelling team performances of the Kaggle European Soccer database." <em>Statistical Modelling</em>, SAGE.</li>
+          <li>Groll, A., et al. (2019). "Hybrid machine learning forecasts for the FIFA Women's World Cup 2019." <em>arXiv</em>.</li>
+          <li>Procedia Computer Science. (2025). "Ensemble Methods and Feature Selection for EPL Match Outcome." <em>ScienceDirect</em>.</li>
+          <li>Mathien, H. (2016). European Soccer Database. <em>Kaggle</em>.</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    Soccer Match Prediction Project &nbsp;·&nbsp; Derrick &nbsp;·&nbsp; 2026 &nbsp;·&nbsp;
+    <a href="https://github.com/derrickNy34/soccer-match-prediction">github.com/derrickNy34/soccer-match-prediction</a>
+  </div>
+
+</div>
+</body>
+</html>
